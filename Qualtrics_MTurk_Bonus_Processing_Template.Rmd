@@ -1,0 +1,234 @@
+---
+title: "Qualtrics_MTurk_Bonus_Processing_Template"
+author: "Leo Goldman lg2908"
+date: "2/26/2020"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#Enter the name of your Qualtrics csv below
+q_csv = ""
+q_df = read.csv( q_csv, as.is = T )
+q_df = q_df[ 3:dim(q_df)[1], ]
+dim( q_df )
+q_df = q_df[ q_df$Status != "Survey Preview",  ]
+dim( q_df )
+
+#Enter the name of your MTurk (results) csv below
+mturk_csv = ""
+m_df = read.csv( mturk_csv, as.is = T )
+dim( m_df )
+```
+
+Template for method that checks if an attention check was passed
+Input: (Qualtrics) dataframe
+Output: (Qualtrics) dataframe with extra column, df$passed_attention_check_X
+```{r}
+attention_check_1 = function( df, right_answer ){
+  right_answer = ""
+  #NOTE: df$column below needs to be changed to the column in the Qualtrics dataframe with the attention check
+  df$pass_attention_check = ifelse( df$column == right_answer, 1, 0 ) 
+  pct_pass_check = sum( df$pass_attention_check ) / length( df$pass_attention_check )
+  print( "Pct of participants who passed the attention check:" )
+  print( round( pct_pass_check, 2 ) )
+  return( df )
+}
+```
+
+Template for checking if they correct answer was given for a question
+Input: (Qualtrics) dataframe
+Output: (Qualtrics) dataframe with extra column, df$correct_answer_X
+```{r}
+correct_answer_ = function( df, right_answer ){
+  right_answer = ""
+  df$correct_answer_1 = ifelse( df$Q == right_answer, 1, 0 )
+  pct_pass_check = sum( df$correct_answer_1 ) / length( df$correct_answer_1 )
+  print( "Pct of participants who got ______ correct:" )
+  print( round( pct_pass_check, 2 ) )
+  return( df )
+}
+
+```
+
+calc_score
+Method to get the participants raw score 
+May require a lot of editing depending on survey payout scheme
+```{r}
+calc_score = function( df, max_possible_score = NA ){
+  df$raw_score = 0
+  #Note that by default correct_answer_X do not exist
+  #Have to change it for which methods you are using and which column names you created
+  for( i in 1:length( df$raw_score ) ){
+    df$raw_score[i] = sum( df$correct_answer_1[i],
+                           df$correct_answer_2[i] )
+  }
+  
+  #Quick robustness check (if max score was inputted)
+  if( !is.na( max_possible_score ) ){
+    if( max( df$raw_score ) > max_possible_score ){
+      print( "ERROR: Someone has a score above 3" )
+    }
+  }
+  
+  print( "Raw scores calculated. df$raw_score created" )
+  print( "Summary of scores:" )
+  print( summary( df$raw_score ) )
+  return( df )
+}
+```
+
+create_bonus_amounts
+Method for calculating bonus amounts
+NOTE: REQUIRES df$raw_score column
+```{r}
+create_bonus_amounts = function( df, dollar_per_question, base_amt, max_possible_score = NA ){
+  df$bonus_amt = base_amt + df$raw_score * dollar_per_question
+  
+  #Robustness check
+  if( !is.na( max_possible_score ) ){
+    if( max( df$bonus_amt ) > base_amt + max_possible_score * dollar_per_question ){
+      print( "ERROR: Someone is getting more than ", base_amt + 3 * dollar_per_question )
+    }
+  }
+  
+  print( "Bonus amounts calculuated. df$bonus_amt created." )
+  print( "Bonus column summary:" )
+  print( summary( df$bonus_amt ) )
+  print( "Bonus column sum (including 20 pct fee):" )
+  print( sum( df$bonus_amt ) * 1.2 )
+  return( df )
+}
+```
+
+main
+Main method to run all needed operations on the Qualtrics df
+```{r}
+main = function( df ){
+  df = attention_check_1( df, right_answer =  )
+  df = correct_answer_( df, right_answer =  )
+  df = calc_score( df, max_possible_score =  )
+  df = create_bonus_amounts( df, dollar_per_question = 0, base_amt = 0, max_possible_score =  )
+  return( df )
+}
+```
+
+Matching workers to bonuses and failures (Qualtrics to Mturk)
+Requires that Qualtrics df have bonus_amt column
+Returns m_df with the added features of bonus_amt (newly matched)
+```{r}
+#We're going to bring the bonus amount and failed_check from Q df into the Mturk df
+get_bonuses = function( m_df, q_df, q_random_ID_col_name = NA ){
+  if( is.na( q_random_ID_col_name ) ){
+    q_random_ID_col_name = "Random.ID"
+  }
+  
+  m_df$bonus_amt = 0 #Set everyone's bonus to 0 initially
+  #m_df$failed_check = 0 #Set everyone to passing initially
+  for( i in 1:length( m_df$Answer.surveycode ) ){
+    index = which( q_df[ , q_random_ID_col_name ] == m_df$Answer.surveycode[i] )
+    if( length( index ) > 1 ){
+      print( "We got a double match! Check out ID", m_df$Answer.surveycode[i] )
+    }
+    if( length( index ) > 0 ){
+      temp_bonus = max( q_df$bonus_amt[ index ] ) #If a survey code maps to more than one worker, give them the higher bonus
+      m_df$bonus_amt[i] = temp_bonus
+      #m_df$failed_check[i] = min( q_df$failed_check[ index ] ) #If a survey code maps to more than one worker, give them ben of doubt
+    }
+    else{
+      print( "No match for MTurk SurveyCode" )
+      print( m_df$Answer.surveycode[i] )
+    }
+  }
+  print( "Added bonuses from Qualtrics df to MTurk df")
+  return( m_df )
+}
+```
+
+add_reason
+Add reason column
+```{r}
+add_reason = function( m_df, message = "" ){
+  if( message == "" ){
+    message = "Thank you for taking our survey"
+  }
+  m_df$reason = paste( '"', message, '"', sep = "" )
+  print( "Added reason column to MTurk df" )
+  return( m_df )
+}
+
+```
+
+gen_aws
+Create the actual Terminal command to send the bonus
+```{r}
+#“aws mturk send-bonus --worker-id XXXXXXXX --bonus-amount X.XX --assignment-id XXXXXXXXX --reason "Thank you for XXXXXX"
+gen_aws = function( m_df ){
+  m_df$aws_com = ""
+  for( i in 1:length( m_df$aws_com ) ){
+    if( m_df$bonus_amt[i] > 0 ){
+      temp = paste( "aws mturk send-bonus --worker-id",
+                  m_df$WorkerId[i],
+                  "--bonus-amount",
+                  m_df$bonus_amt[i],
+                  "--assignment-id",
+                  m_df$AssignmentId[i],
+                  "--reason",
+                  m_df$reason[i],
+                  sep = " " )
+      m_df$aws_com[i] = temp
+    }
+    else{
+      m_df$aws_com[i] = ""
+    }
+  }
+  print( "Added aws command to mdf" )
+  return( m_df )
+}
+```
+
+gen_bash_output
+Create the text file (not txt) that can be run in Terminal
+```{r}
+gen_bash_output = function( m_df, output_file_name = "output", curr_acct_balance = NA ){
+  num_b = sum( m_df$bonus_amt > 0 )
+  total_b = sum( m_df$bonus_amt ) * 1.2
+  end_echo = paste( "echo Completed. Should have paid out", total_b, "incl fees to", num_b, "workers", sep = " " )
+  if( !is.na( curr_acct_balance ) ){
+    remain = curr_acct_balance - total_b
+    end_echo2 = paste( "echo Account balance should now be ", remain, sep = "" )
+    end_echo = c( end_echo, end_echo2 )
+  }
+  
+  text = c( "#!/bin/bash",
+            m_df$aws_com,
+            "aws mturk get-account-balance",
+            end_echo )
+  
+  writeLines( text, output_file_name )
+  print( "Process completed. Output file (bash) created." )
+  
+}
+```
+
+USER: Run main on (Qualtrics) df and then few methods to match to (MTurk) df
+Then generate bash script in this file's directory
+```{r}
+#Runs needed methods on Qualtrics df
+processed_qdf = main( df = qdf )
+
+#Runs methods to match Qualtrics to MTurk df and shows MTurk df
+processed_mdf = get_bonuses( m_df, processed_qdf, random_ID_col_name =  )
+processed_mdf = add_reason( processed_mdf, message = "" )
+processed_mdf = gen_aws( processed_mdf )
+processed_mdf
+
+#Generates bash script with file name given by output parameter (note it should not have a file extension)
+gen_bash_output( m_df = processed_mdf, output = , curr_acct_balance =  )
+```
+
+
+
+
