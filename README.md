@@ -18,3 +18,6 @@ Paying MTurk Bulk Bonuses
 Using Bash to Efficiently Pay MTurk Bulk Bonuses
   - This is a more advanced guide to pay bulk bonuses. The process is streamlined and less prone to error than the simpler 
     guide, although it does require a fair amount of code (detailed steps included)
+    
+Qualtrics_MTurk_Tutorial
+  - This is the slide deck from a Qualtrics/MTurk tutorial presentation given in Nov. 2019
