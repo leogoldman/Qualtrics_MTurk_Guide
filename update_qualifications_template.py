@@ -1,5 +1,5 @@
 import boto3
-from tqdm import tqdm #Keep this package if you want progress bars (used in line 53)
+from tqdm import tqdm #Keep this package if you want progress bars (used in final for loop around line 54)
 
 # Fill in these fields if you haven't configured your AWS
 # region_name = 'us-east-1'
