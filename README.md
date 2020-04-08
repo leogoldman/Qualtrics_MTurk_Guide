@@ -6,7 +6,7 @@ This repository is intended to be a guide for researchers using MTurk, and speci
 
 update_qualifications_template.py
   - This is a Python script that can assign workers that took a HIT (specified which HIT by the HIT ID in the script) and assign them a qualification type and score. If your AWS account has not been configured in Terminal, this script requires your AWS keys. For help on acquiring your AWS keys, see "Creating_MTurk_Account.docx."
-  - Note that this assumes the relevent worker qualification type has been created on the MTurk website.
+  - This script assumes the relevent worker qualification type has been created on the MTurk website.
 
 Qualtrics_MTurk_Bonus_Processing_Template.Rmd
   - This is an R markdown file that serves as a general template for processing Qualtrics results along with MTurk results to 
