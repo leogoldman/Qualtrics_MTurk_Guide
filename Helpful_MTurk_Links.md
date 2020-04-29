@@ -21,3 +21,12 @@ HITs Worth Turking For Subreddit
 
 Link: https://www.reddit.com/r/HITsWorthTurkingFor/new/
 Description: Similar to TurkerNation, a subreddit for posting high-paid MTurk jobs.
+
+Demographics and Dynamics of Mechanical Turk Workers (A short review of MTurk demograhpics written in 2017)
+
+Link: http://www.ipeirotis.com/wp-content/uploads/2017/12/wsdmf074-difallahA.pdf
+Description: This is a study by researchers at NYU and CUNY that examines demographics of the pool of MTurk workers, based on a long-term survey. They also present results on the demographics tracker (link below).
+
+MTurk Demographics Tracker
+Link: http://demographics.mturk-tracker.com/
+Description: Lets you observe demograhpics of the MTurk worker pool by gender, country, age, income, and more. This is ongoing, so statistics are up to date.
