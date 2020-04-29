@@ -30,4 +30,4 @@ Description: This is a study by researchers at NYU and CUNY that examines demogr
 **MTurk Demographics Tracker**
 
 Link: http://demographics.mturk-tracker.com/  
-Description: Lets you observe demograhpics of the MTurk worker pool by gender, country, age, income, and more. This is ongoing, so statistics are up to date.
+Description: Lets you observe demographics of the MTurk worker pool by gender, country, age, income, and more. This is ongoing, so statistics are up to date.
