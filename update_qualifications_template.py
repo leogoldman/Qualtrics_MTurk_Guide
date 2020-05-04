@@ -14,11 +14,19 @@ hit_id = '3VQTAXTYO7LWU6YVLF26YZRGP66UBM'
 # Enter the friendly name of the qualification types that you are trying to assign to workers. It is OK if there is only one item in the list (keep it as a list)
 qual_ids = [ "Prev_Worker_Cor_r3" ]
 
-client = boto3.client( 'mturk',
-    endpoint_url=endpoint_url,
-    region_name=region_name,
-    aws_access_key_id=aws_access_key_id,
-    aws_secret_access_key=aws_secret_access_key )
+#####
+# If using the variables above (region_name, access keys, endpoint_url)
+# comment out the call below 'client = boto3.client( 'mturk' )
+# and uncomment the method call below that (same call but with parameters)
+#####
+
+client = boto3.client( 'mturk' )
+
+# client = boto3.client( 'mturk',
+#     endpoint_url=endpoint_url,
+#     region_name=region_name,
+#     aws_access_key_id=aws_access_key_id,
+#     aws_secret_access_key=aws_secret_access_key )
 
 paginator = client.get_paginator( 'list_assignments_for_hit' )
 response_iterator = paginator.paginate(
