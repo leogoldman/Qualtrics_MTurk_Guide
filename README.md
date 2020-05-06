@@ -4,6 +4,9 @@ This repository is intended to be a guide for researchers using MTurk, and speci
 
 # Included Files:
 
+Qualtrics_MTurk_Bonus_Processing_Template.Rmd
+  - This is a Python script intended to replace the similarly named R markdown script and the need to use the command line (Terminal) to pay out bonuses. The script takes a Qualtrics results CSV file, an MTurk results CSV file (download results for batch) and pays out the appropriate bonuses. It is intended to be built on for specific payment schemes (users can add more correct answer checks or change the method of calculating score). Once configured, this script can pay workers from an MTurk account and should be used at the user's own risk.
+ 
 update_qualifications_template.py
   - This is a Python script that can assign workers that took a HIT (specified which HIT by the HIT ID in the script) and assign them a qualification type and score. If your AWS account has not been configured in Terminal, this script requires your AWS keys. For help on acquiring your AWS keys, see "Creating_MTurk_Account.docx."
   - This script assumes the relevent worker qualification type has been created on the MTurk website.
