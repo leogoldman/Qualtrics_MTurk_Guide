@@ -13,24 +13,24 @@ import sys
 #Once these are uncommented out, bonuses may be sent out
 
 # Fill in these fields if you haven't configured your AWS
-# region_name = 'us-east-1'
-# aws_access_key_id = 'YOUR_ACCESS_ID'
-# aws_secret_access_key = 'YOUR_SECRET_KEY'
-# endpoint_url = 'https://mturk-requester.us-east-1.amazonaws.com'
+region_name = 'us-east-1'
+aws_access_key_id = 'YOUR_ACCESS_ID'
+aws_secret_access_key = 'YOUR_SECRET_KEY'
+endpoint_url = 'https://mturk-requester.us-east-1.amazonaws.com'
 
 #####
-# If using the variables above (region_name, access keys, endpoint_url)
-# comment out the call below 'client = boto3.client( 'mturk' )
-# and uncomment the method call below that (same call but with parameters)
+# If you are not using the above variables because you have already configured
+# the AWS client via Terminal, uncomment the boto3.client() call that only has
+# one parameter, 'mturk' and comment out the above variables
 #####
 
-client = boto3.client( 'mturk' )
+#client = boto3.client( 'mturk' )
 
-# client = boto3.client( 'mturk',
-#     endpoint_url=endpoint_url,
-#     region_name=region_name,
-#     aws_access_key_id=aws_access_key_id,
-#     aws_secret_access_key=aws_secret_access_key )
+client = boto3.client( 'mturk',
+    endpoint_url=endpoint_url,
+    region_name=region_name,
+    aws_access_key_id=aws_access_key_id,
+    aws_secret_access_key=aws_secret_access_key )
 
 #Enter CSV file names and bonus reason
 qualtrics_csv = ""
@@ -84,7 +84,7 @@ def create_bonus_amounts( df, base_amt, dollar_per_question ):
     
 #Method for matching workers from MTurk results to Qualtrics entry
 def get_bonuses( m_df, q_df, q_random_ID_col_name = "Random ID" ):
-    m_df[ "bonus_amt" ] = [ 0 for x in range( m_df.shape[0] ) ] #Set everyone's bonus to 0 initially
+    m_df[ "bonus_amt" ] = [ "0" for x in range( m_df.shape[0] ) ] #Set everyone's bonus to 0 initially
     for i in range( m_df[ "Answer.surveycode" ].size ):
         temp_code = str( m_df["Answer.surveycode"][i] )
         q_df_ID_col = q_df[ q_random_ID_col_name ]
