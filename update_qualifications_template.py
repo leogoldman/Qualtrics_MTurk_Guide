@@ -2,31 +2,31 @@ import boto3
 from tqdm import tqdm #Keep this package if you want progress bars (used in final for loop around line 54)
 
 # Fill in these fields if you haven't configured your AWS
-# region_name = 'us-east-1'
-# aws_access_key_id = 'YOUR_ACCESS_ID'
-# aws_secret_access_key = 'YOUR_SECRET_KEY'
-# endpoint_url = 'https://mturk-requester.us-east-1.amazonaws.com'
+region_name = 'us-east-1'
+aws_access_key_id = 'YOUR_ACCESS_ID'
+aws_secret_access_key = 'YOUR_SECRET_KEY'
+endpoint_url = 'https://mturk-requester.us-east-1.amazonaws.com'
 #
 #
 # Enter the HIT ID (as a STRING) whose workers you are trying to assign a qualifciation to (this can be found in your results page or downloaded CSV)
 hit_id = '3VQTAXTYO7LWU6YVLF26YZRGP66UBM'
 #
 # Enter the friendly name of the qualification types that you are trying to assign to workers. It is OK if there is only one item in the list (keep it as a list)
-qual_ids = [ "Prev_Worker_Cor_r3" ]
+qual_ids = [ "Prev_Worker" ]
 
 #####
-# If using the variables above (region_name, access keys, endpoint_url)
-# comment out the call below 'client = boto3.client( 'mturk' )
-# and uncomment the method call below that (same call but with parameters)
+# If you are not using the above variables because you have already configured
+# the AWS client via Terminal, uncomment the boto3.client() call that only has
+# one parameter, 'mturk' and comment out the above variables
 #####
 
-client = boto3.client( 'mturk' )
+#client = boto3.client( 'mturk' )
 
-# client = boto3.client( 'mturk',
-#     endpoint_url=endpoint_url,
-#     region_name=region_name,
-#     aws_access_key_id=aws_access_key_id,
-#     aws_secret_access_key=aws_secret_access_key )
+client = boto3.client( 'mturk',
+    endpoint_url=endpoint_url,
+    region_name=region_name,
+    aws_access_key_id=aws_access_key_id,
+    aws_secret_access_key=aws_secret_access_key )
 
 paginator = client.get_paginator( 'list_assignments_for_hit' )
 response_iterator = paginator.paginate(
